@@ -36,6 +36,10 @@ app.use(
     secret: "kambaz",
     resave: false,
     saveUninitialized: false,
+    cookie: {
+      secure: true,          
+      sameSite: "none",      
+    }
   })
 );
 
