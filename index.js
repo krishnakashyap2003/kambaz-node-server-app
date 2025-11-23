@@ -11,11 +11,28 @@ import EnrollmentRoutes from "./Kambaz/Enrollments/routes.js";
 
 const app = express();
 
-// CORS - use environment variable
+// CORS - allow multiple origins (production and preview deployments)
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  "https://kambaz-next-js-bjvf-nz01e6dxo.vercel.app",
+  "https://kambaz-next-js-bjvf-git-main-krishna-kashyaps-projects-80a2e86c.vercel.app",
+  "http://localhost:3000", // for local development
+].filter(Boolean); // Remove undefined values
+
 app.use(
   cors({
     credentials: true,
-    origin: process.env.CLIENT_URL || "http://localhost:3000",
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+      
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.warn(`CORS blocked origin: ${origin}`);
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
   })
 );
 
@@ -31,7 +48,7 @@ if (process.env.SERVER_ENV !== "development") {
   sessionOptions.cookie = {
     sameSite: "none",
     secure: true,
-    domain: process.env.SERVER_URL,
+    // domain removed for cross-origin support (frontend on Vercel, backend on Render)
   };
 }
 
