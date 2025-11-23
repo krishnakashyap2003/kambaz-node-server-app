@@ -107,6 +107,19 @@ export default function UserRoutes(app) {
     res.sendStatus(204);
   };
 
+  // Fetch all courses for the currently logged-in user
+app.get("/api/users/current/courses", (req, res) => {
+  const currentUser = req.session["currentUser"];
+  if (!currentUser) {
+    res.sendStatus(401);
+    return;
+  }
+
+  const courses = courseDao.findCoursesForEnrolledUser(currentUser._id);
+  res.json(courses);
+});
+
+
   // Routes
   app.post("/api/users/signup", signup);
   app.post("/api/users/signin", signin);
