@@ -1,4 +1,4 @@
-import "dotenv/config"; 
+import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import session from "express-session";
@@ -11,6 +11,7 @@ import EnrollmentRoutes from "./Kambaz/Enrollments/routes.js";
 
 const app = express();
 
+// CORS - use environment variable
 app.use(
   cors({
     credentials: true,
@@ -18,6 +19,7 @@ app.use(
   })
 );
 
+// Session configuration
 const sessionOptions = {
   secret: process.env.SESSION_SECRET || "kambaz",
   resave: false,
@@ -36,6 +38,12 @@ if (process.env.SERVER_ENV !== "development") {
 app.use(session(sessionOptions));
 app.use(express.json());
 
+// ROOT ROUTE - ADD THIS
+app.get("/", (req, res) => {
+  res.send("Welcome to Full Stack Development!");
+});
+
+// ROUTES
 UserRoutes(app);
 CourseRoutes(app);
 ModuleRoutes(app);
@@ -43,6 +51,7 @@ AssignmentRoutes(app);
 EnrollmentRoutes(app);
 Lab5(app);
 
-app.listen(process.env.PORT || 4000, () => {
-  console.log("Server running on port", process.env.PORT || 4000);
+const PORT = process.env.PORT || 4000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
